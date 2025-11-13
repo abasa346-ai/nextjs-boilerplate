@@ -1,0 +1,56 @@
+import React, { useState } from "react";
+
+export default function App() { const products = [ { name: "كوكيز كلاسك", price: 4000, desc: "كوكيز طازج ولذيذ" }, { name: "دونات", price: 2000, desc: "دونات طرية بالشوكولا" }, { name: "ماتيلدا", price: 5000, desc: "حلويات مميزة وفاخرة" }, ];
+
+const [cart, setCart] = useState([]);
+
+const addToCart = (product) => { const existing = cart.find((item) => item.name === product.name); if (existing) { setCart(cart.map((item) => item.name === product.name ? { ...item, qty: item.qty + 1 } : item)); } else { setCart([...cart, { ...product, qty: 1 }]); } };
+
+const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+
+const sendWhatsApp = () => { let message = مرحبا! أريد الطلب:\n; cart.forEach(item => { message += ${item.name} x${item.qty} - ${item.price * item.qty} د.ع\n; }); message += المجموع الكلي: ${total} د.ع; const phone = "+964xxxxxxxxx"; // حط رقمك هنا window.open(https://wa.me/${phone}?text=${encodeURIComponent(message)}); };
+
+return ( <div className="w-full min-h-screen bg-white text-gray-900 p-6 space-y-8"> {/* Header */} <h1 className="text-3xl font-bold text-center">متجر الحلويات</h1>
+
+{/* Products Grid */}
+  <div className="grid grid-cols-2 gap-4">
+    {products.map((product) => (
+      <div key={product.name} className="bg-gray-50 rounded-2xl shadow p-4 flex flex-col items-center">
+        <div className="w-full h-28 bg-gray-200 rounded-xl mb-2" />
+        <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
+        <p className="text-sm text-gray-500">{product.desc}</p>
+        <p className="text-lg font-bold mt-1">{product.price} د.ع</p>
+        <button onClick={() => addToCart(product)} className="mt-2 px-4 py-2 rounded-xl bg-black text-white text-sm">
+          إضافة للسلة
+        </button>
+      </div>
+    ))}
+  </div>
+
+  {/* Cart Section */}
+  <div className="mt-8 p-4 bg-gray-100 rounded-2xl shadow">
+    <h2 className="text-2xl font-bold mb-4">🛒 السلة</h2>
+    <div className="space-y-3">
+      {cart.length === 0 && <p>السلة فارغة</p>}
+      {cart.map((item) => (
+        <div key={item.name} className="flex justify-between items-center">
+          <span>{item.name} x{item.qty}</span>
+          <span>{item.price * item.qty} د.ع</span>
+        </div>
+      ))}
+    </div>
+    {cart.length > 0 && (
+      <>
+        <div className="flex justify-between mt-4 font-bold text-xl">
+          <span>المجموع:</span>
+          <span>{total} د.ع</span>
+        </div>
+        <button onClick={sendWhatsApp} className="w-full mt-4 py-3 rounded-xl bg-black text-white text-lg">
+          إرسال الطلب على واتساب
+        </button>
+      </>
+    )}
+  </div>
+</div>
+
+); }
